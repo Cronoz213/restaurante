@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nova Reserva - Painel Administrativo</title>
+  <link rel="stylesheet" href="../admin-style.css">
+</head>
+<body>
+  <div class="admin-wrapper">
+    <aside class="sidebar">
+      <h1>🍷 Bella Vista</h1>
+      <span class="sidebar-subtitle">Painel Admin</span>
+
+      <ul class="sidebar-menu">
+        <li><a href="../dashboard.html">📊 Dashboard</a></li>
+
+        <li>
+          <a href="#" onclick="toggleSubmenu(event)">📋 Categorias</a>
+          <ul class="submenu" id="submenu-categorias">
+            <li><a href="../categorias/listar.html">Listar</a></li>
+            <li><a href="../categorias/form.html">Nova Categoria</a></li>
+          </ul>
+        </li>
+
+        <li>
+          <a href="#" onclick="toggleSubmenu(event)">🍽️ Pratos</a>
+          <ul class="submenu" id="submenu-pratos">
+            <li><a href="../pratos/listar.html">Listar</a></li>
+            <li><a href="../pratos/form.html">Novo Prato</a></li>
+          </ul>
+        </li>
+
+        <li>
+          <a href="#" onclick="toggleSubmenu(event)">🪑 Mesas</a>
+          <ul class="submenu" id="submenu-mesas">
+            <li><a href="../mesas/listar.html">Listar</a></li>
+            <li><a href="../mesas/form.html">Nova Mesa</a></li>
+          </ul>
+        </li>
+
+        <li>
+          <a href="#" onclick="toggleSubmenu(event)">📅 Reservas</a>
+          <ul class="submenu active" id="submenu-reservas">
+            <li><a href="listar.html">Listar</a></li>
+            <li><a href="form.html" class="active">Nova Reserva</a></li>
+          </ul>
+        </li>
+
+        <li style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #34495e;">
+          <a href="#" onclick="fazerLogout()">🚪 Sair</a>
+        </li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <div class="header-page">
+        <h2>Nova Reserva</h2>
+      </div>
+
+      <div class="form-section">
+        <form onsubmit="salvarReserva(event)">
+          <div class="form-row">
+            <div class="form-group required">
+              <label for="nome">Nome do Cliente</label>
+              <input type="text" id="nome" name="nome" required placeholder="Nome completo">
+            </div>
+
+            <div class="form-group required">
+              <label for="telefone">Telefone</label>
+              <input type="tel" id="telefone" name="telefone" required placeholder="(00) 00000-0000">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="email@example.com">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group required">
+              <label for="mesa_id">Mesa</label>
+              <select id="mesa_id" name="mesa_id" required>
+                <option value="">-- Selecione uma mesa --</option>
+                <option value="1">Mesa 1 - 2 pessoas - Canto aconchegante</option>
+                <option value="2">Mesa 2 - 2 pessoas - Canto aconchegante</option>
+                <option value="3">Mesa 3 - 4 pessoas - Janela com vista</option>
+                <option value="4">Mesa 4 - 4 pessoas - Janela com vista</option>
+                <option value="5">Mesa 5 - 6 pessoas - Área central</option>
+                <option value="6">Mesa 6 - 6 pessoas - Área central</option>
+                <option value="7">Mesa 7 - 8 pessoas - Varanda externa</option>
+                <option value="8">Mesa 8 - 8 pessoas - Varanda externa</option>
+              </select>
+            </div>
+
+            <div class="form-group required">
+              <label for="num_pessoas">Número de Pessoas</label>
+              <input type="number" id="num_pessoas" name="num_pessoas" required min="1" max="20" placeholder="2">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group required">
+              <label for="data_reserva">Data</label>
+              <input type="date" id="data_reserva" name="data_reserva" required>
+            </div>
+
+            <div class="form-group required">
+              <label for="hora_reserva">Horário</label>
+              <input type="time" id="hora_reserva" name="hora_reserva" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="observacoes">Observações</label>
+            <textarea id="observacoes" name="observacoes" placeholder="Restrições alimentares, ocasião especial, etc."></textarea>
+          </div>
+
+          <div class="form-group required">
+            <label for="status">Status</label>
+            <select id="status" name="status" required>
+              <option value="pendente">Pendente</option>
+              <option value="confirmada">Confirmada</option>
+              <option value="cancelada">Cancelada</option>
+            </select>
+          </div>
+
+          <div class="form-buttons">
+            <button type="submit" class="btn btn-success">✓ Salvar Reserva</button>
+            <a href="listar.html" class="btn btn-secondary">✕ Cancelar</a>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    window.addEventListener('load', function() {
+      if (localStorage.getItem('user_logged') !== 'true') {
+        window.location.href = '../login.html';
+      }
+
+      const datePicker = document.getElementById('data_reserva');
+      datePicker.setAttribute('min', new Date().toISOString().split('T')[0]);
+    });
+
+    function toggleSubmenu(event) {
+      event.preventDefault();
+      const submenu = event.target.nextElementSibling;
+      if (submenu && submenu.classList.contains('submenu')) {
+        submenu.classList.toggle('active');
+      }
+    }
+
+    function fazerLogout() {
+      if (confirm('Tem certeza que deseja sair?')) {
+        localStorage.removeItem('user_logged');
+        localStorage.removeItem('username');
+        window.location.href = '../login.html';
+      }
+    }
+
+    function salvarReserva(event) {
+      event.preventDefault();
+      alert('✓ Reserva salva com sucesso!');
+      window.location.href = 'listar.html';
+    }
+  </script>
+</body>
+</html>

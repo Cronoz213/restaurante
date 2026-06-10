@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservar Mesa - Bella Vista</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo-section">
+        <h1>🍷 Bella Vista</h1>
+        <span>Restaurante & Bistro</span>
+      </div>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="cardapio.html">Cardápio</a>
+        <a href="reserva.html" class="active">Reservar</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <section>
+      <h2>Reservar uma Mesa</h2>
+
+      <div style="background-color: #2d1500; border: 1px solid #8b4513; border-radius: 8px; padding: 20px; margin-bottom: 30px;">
+        <p style="color: #c9a87c;">
+          <strong style="color: #ff8c42;">📞 Prefere ligar?</strong><br>
+          Entre em contato por telefone: <strong>(62) 3333-4444</strong> ou <strong>WhatsApp: (62) 99999-8888</strong><br>
+          Nossos funcionários ficarão felizes em ajudá-lo!
+        </p>
+      </div>
+
+      <h3 style="margin-top: 0;">Preencha os dados para reservar sua mesa</h3>
+
+      <div class="form-section" style="max-width: 700px;">
+        <form onsubmit="enviarReserva(event)">
+          <div class="form-group">
+            <label for="nome">Nome Completo *</label>
+            <input type="text" id="nome" name="nome" required placeholder="Seu nome completo">
+          </div>
+
+          <div class="form-group">
+            <label for="telefone">Telefone / WhatsApp *</label>
+            <input type="tel" id="telefone" name="telefone" required placeholder="(00) 00000-0000">
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="seu@email.com">
+          </div>
+
+          <div class="form-group">
+            <label for="mesa_id">Selecione uma Mesa *</label>
+            <select id="mesa_id" name="mesa_id" required>
+              <option value="">-- Escolha uma mesa --</option>
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group" style="margin-bottom: 20px;">
+              <label for="data_reserva">Data da Reserva *</label>
+              <input type="date" id="data_reserva" name="data_reserva" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+              <label for="hora_reserva">Horário *</label>
+              <input type="time" id="hora_reserva" name="hora_reserva" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="num_pessoas">Número de Pessoas *</label>
+            <input type="number" id="num_pessoas" name="num_pessoas" required min="1" max="20" placeholder="1">
+          </div>
+
+          <div class="form-group">
+            <label for="observacoes">Observações (Restrições Alimentares, Ocasião Especial, etc.)</label>
+            <textarea id="observacoes" name="observacoes" placeholder="Ex: Aniversário, vegetariano, alergias..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 1rem;">
+            ✓ Confirmar Reserva
+          </button>
+        </form>
+      </div>
+
+      <div id="mensagem" style="display: none; margin-top: 20px;"></div>
+
+      <section style="margin-top: 50px;">
+        <h3>Informações Importantes</h3>
+        <div style="background-color: #2d1500; border: 1px solid #8b4513; border-radius: 8px; padding: 20px;">
+          <p style="color: #c9a87c; margin-bottom: 12px;">
+            <strong style="color: #ff8c42;">⏰ Horário de Funcionamento:</strong><br>
+            Seg-Sex: 11h00 - 15h00 (Almoço) | 18h00 - 23h00 (Jantar)<br>
+            Sáb-Dom: 11h00 - 16h00 (Almoço) | 18h00 - 00h00 (Jantar)
+          </p>
+          <p style="color: #c9a87c; margin-bottom: 12px;">
+            <strong style="color: #ff8c42;">📋 Política de Cancelamento:</strong><br>
+            Cancelamentos devem ser feitos com pelo menos 2 horas de antecedência.
+          </p>
+          <p style="color: #c9a87c; margin-bottom: 12px;">
+            <strong style="color: #ff8c42;">👥 Grupos Grandes:</strong><br>
+            Para grupos acima de 10 pessoas, entre em contato conosco para arranjos especiais.
+          </p>
+          <p style="color: #c9a87c;">
+            <strong style="color: #ff8c42;">🎉 Eventos Privados:</strong><br>
+            Oferecemos espaço para eventos privados. Solicite informações pelo telefone.
+          </p>
+        </div>
+      </section>
+    </section>
+  </div>
+
+  <script>
+    document.getElementById('data_reserva').setAttribute('min', new Date().toISOString().split('T')[0]);
+
+    function enviarReserva(event) {
+      event.preventDefault();
+
+      const nome = document.getElementById('nome').value;
+      const telefone = document.getElementById('telefone').value;
+      const email = document.getElementById('email').value;
+      const mesaId = document.getElementById('mesa_id').value;
+      const data = document.getElementById('data_reserva').value;
+      const hora = document.getElementById('hora_reserva').value;
+      const numPessoas = document.getElementById('num_pessoas').value;
+      const observacoes = document.getElementById('observacoes').value;
+
+      const mensagem = document.getElementById('mensagem');
+      mensagem.innerHTML = `
+        <div class="alert alert-success">
+          ✓ <strong>Reserva realizada com sucesso!</strong><br>
+          Número da reserva: <strong>#RES-${Math.floor(Math.random() * 10000)}</strong><br>
+          Entraremos em contato no número ${telefone} para confirmar sua reserva.<br>
+          <br>
+          <strong>Dados da Reserva:</strong><br>
+          Nome: ${nome}<br>
+          Data: ${new Date(data).toLocaleDateString('pt-BR')}<br>
+          Horário: ${hora}<br>
+          Pessoas: ${numPessoas}<br>
+          Mesa: ${document.getElementById('mesa_id').options[document.getElementById('mesa_id').selectedIndex].text}
+        </div>
+      `;
+      mensagem.style.display = 'block';
+
+      document.querySelector('form').reset();
+
+      mensagem.scrollIntoView({ behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

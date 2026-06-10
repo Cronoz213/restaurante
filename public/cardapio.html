@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardápio - Bella Vista</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo-section">
+        <h1>🍷 Bella Vista</h1>
+        <span>Restaurante & Bistro</span>
+      </div>
+      <nav>
+        <a href="index.html">Início</a>
+        <a href="cardapio.html" class="active">Cardápio</a>
+        <a href="reserva.html">Reservar</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <section>
+      <h2>Nosso Cardápio</h2>
+
+      <div class="filtro-categorias">
+        <a href="#" class="active" onclick="mostrarCategoria('todos'); return false;">Todos</a>
+        <a href="#" onclick="mostrarCategoria('entradas'); return false;">Entradas</a>
+        <a href="#" onclick="mostrarCategoria('pratos'); return false;">Pratos Principais</a>
+        <a href="#" onclick="mostrarCategoria('frutos'); return false;">Frutos do Mar</a>
+        <a href="#" onclick="mostrarCategoria('italiana'); return false;">Italiana</a>
+        <a href="#" onclick="mostrarCategoria('sobremesa'); return false;">Sobremesas</a>
+        <a href="#" onclick="mostrarCategoria('bebidas'); return false;">Bebidas</a>
+      </div>
+
+      <div class="categoria-section" id="entradas">
+        <h3>Entradas</h3>
+        <div class="cards-grid">
+        </div>
+      </div>
+
+      <div class="categoria-section" id="pratos">
+        <h3>Pratos Principais</h3>
+        <div class="cards-grid">
+        </div>
+      </div>
+
+      <div class="categoria-section" id="frutos">
+        <h3>Frutos do Mar</h3>
+        <div class="cards-grid">
+        </div>
+      </div>
+
+      <div class="categoria-section" id="italiana">
+        <h3>Italiana</h3>
+        <div class="cards-grid">
+        </div>
+      </div>
+
+      <div class="categoria-section" id="sobremesa">
+        <h3>Sobremesas</h3>
+        <div class="cards-grid">
+        </div>
+      </div>
+
+      <div class="categoria-section" id="bebidas">
+        <h3>Bebidas</h3>
+        <div class="cards-grid">
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 40px;">
+        <a href="reserva.html" class="btn btn-primary">Reservar uma Mesa</a>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function mostrarCategoria(cat) {
+      const categorias = document.querySelectorAll('.categoria-section');
+      categorias.forEach(el => {
+        el.style.display = 'none';
+      });
+
+      if (cat === 'todos') {
+        categorias.forEach(el => {
+          el.style.display = 'block';
+        });
+      } else {
+        const elemento = document.getElementById(cat);
+        if (elemento) {
+          elemento.style.display = 'block';
+        }
+      }
+
+      document.querySelectorAll('.filtro-categorias a').forEach(link => {
+        link.classList.remove('active');
+      });
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

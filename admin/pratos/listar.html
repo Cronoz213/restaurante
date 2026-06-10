@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pratos - Painel Administrativo</title>
+  <link rel="stylesheet" href="../admin-style.css">
+</head>
+<body>
+  <div class="admin-wrapper">
+    <aside class="sidebar">
+      <h1>🍷 Bella Vista</h1>
+      <span class="sidebar-subtitle">Painel Admin</span>
+
+      <ul class="sidebar-menu">
+        <li><a href="../dashboard.html">📊 Dashboard</a></li>
+
+        <li>
+          <a href="#" onclick="toggleSubmenu(event)">📋 Categorias</a>
+          <ul class="submenu" id="submenu-categorias">
+            <li><a href="../categorias/listar.html">Listar</a></li>
+            <li><a href="../categorias/form.html">Nova Categoria</a></li>
+          </ul>
+        </li>
+
+        <li>
+          <a href="#" onclick="toggleSubmenu(event)">🍽️ Pratos</a>
+          <ul class="submenu active" id="submenu-pratos">
+            <li><a href="listar.html" class="active">Listar</a></li>
+            <li><a href="form.html">Novo Prato</a></li>
+          </ul>
+        </li>
+
+        <li>
+          <a href="#" onclick="toggleSubmenu(event)">🪑 Mesas</a>
+          <ul class="submenu" id="submenu-mesas">
+            <li><a href="../mesas/listar.html">Listar</a></li>
+            <li><a href="../mesas/form.html">Nova Mesa</a></li>
+          </ul>
+        </li>
+
+        <li>
+          <a href="#" onclick="toggleSubmenu(event)">📅 Reservas</a>
+          <ul class="submenu" id="submenu-reservas">
+            <li><a href="../reservas/listar.html">Listar</a></li>
+            <li><a href="../reservas/form.html">Nova Reserva</a></li>
+          </ul>
+        </li>
+
+        <li style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #34495e;">
+          <a href="#" onclick="fazerLogout()">🚪 Sair</a>
+        </li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <div class="header-page">
+        <h2>Pratos</h2>
+        <div class="header-actions">
+          <a href="form.html" class="btn btn-success">✚ Novo Prato</a>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Categoria</th>
+              <th>Preço</th>
+              <th>Foto</th>
+              <th>Disponível</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <span class="active">1</span>
+        <a href="#">2</a>
+        <a href="#">3</a>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    window.addEventListener('load', function() {
+      if (localStorage.getItem('user_logged') !== 'true') {
+        window.location.href = '../login.html';
+      }
+    });
+
+    function toggleSubmenu(event) {
+      event.preventDefault();
+      const submenu = event.target.nextElementSibling;
+      if (submenu && submenu.classList.contains('submenu')) {
+        submenu.classList.toggle('active');
+      }
+    }
+
+    function fazerLogout() {
+      if (confirm('Tem certeza que deseja sair?')) {
+        localStorage.removeItem('user_logged');
+        localStorage.removeItem('username');
+        window.location.href = '../login.html';
+      }
+    }
+
+    function confirmarDelecao() {
+      return confirm('Tem certeza que deseja excluir este item?');
+    }
+  </script>
+</body>
+</html>

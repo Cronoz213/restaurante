@@ -5,18 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Painel Administrativo</title>
   <link rel="stylesheet" href="admin-style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
 <body>
   <div class="admin-wrapper">
     <aside class="sidebar">
-      <h1>🍷 Bella Vista</h1>
+      <h1><i class="bi bi-cup-hot-fill"></i> Bella Vista</h1>
       <span class="sidebar-subtitle">Painel Admin</span>
 
       <ul class="sidebar-menu">
-        <li><a href="dashboard.html" class="active">📊 Dashboard</a></li>
+        <li><a href="dashboard.html" class="active"> <i class="bi bi-speedometer2"></i> Dashboard</a></li>
 
         <li>
-          <a href="#" onclick="toggleSubmenu(event)">📋 Categorias</a>
+          <a href="#" onclick="toggleSubmenu(event)"><i class="bi bi-tags"></i>  Categorias</a>
           <ul class="submenu" id="submenu-categorias">
             <li><a href="categorias/listar.html">Listar</a></li>
             <li><a href="categorias/form.html">Nova Categoria</a></li>
@@ -24,7 +25,7 @@
         </li>
 
         <li>
-          <a href="#" onclick="toggleSubmenu(event)">🍽️ Pratos</a>
+          <a href="#" onclick="toggleSubmenu(event)"><i class="bi bi-egg-fried"></i> Pratos</a>
           <ul class="submenu" id="submenu-pratos">
             <li><a href="pratos/listar.html">Listar</a></li>
             <li><a href="pratos/form.html">Novo Prato</a></li>
@@ -32,7 +33,7 @@
         </li>
 
         <li>
-          <a href="#" onclick="toggleSubmenu(event)">🪑 Mesas</a>
+          <a href="#" onclick="toggleSubmenu(event)"><i class="bi bi-table"></i> Mesas</a>
           <ul class="submenu" id="submenu-mesas">
             <li><a href="mesas/listar.html">Listar</a></li>
             <li><a href="mesas/form.html">Nova Mesa</a></li>
@@ -40,7 +41,7 @@
         </li>
 
         <li>
-          <a href="#" onclick="toggleSubmenu(event)">📅 Reservas</a>
+          <a href="#" onclick="toggleSubmenu(event)"><i class="bi bi-calendar-date"></i> Reservas</a>
           <ul class="submenu" id="submenu-reservas">
             <li><a href="reservas/listar.html">Listar</a></li>
             <li><a href="reservas/form.html">Nova Reserva</a></li>
@@ -48,7 +49,7 @@
         </li>
 
         <li style="margin-top: 30px; padding-top: 30px; border-top: 1px solid #34495e;">
-          <a href="#" onclick="fazerLogout()">🚪 Sair</a>
+          <a href="#" onclick="fazerLogout()"><i class="bi bi-box-arrow-right"></i> Sair</a>
         </li>
       </ul>
     </aside>
@@ -63,28 +64,28 @@
 
       <div class="cards-stats">
         <div class="card-stat">
-          <div class="card-stat-icon">🍽️</div>
+          <div class="card-stat-icon"><i class="bi bi-egg-fried"></i></div>
           <div class="card-stat-title">Pratos Cadastrados</div>
           <div class="card-stat-number">0</div>
           <a href="pratos/listar.html">Ver Pratos →</a>
         </div>
 
         <div class="card-stat">
-          <div class="card-stat-icon">🪑</div>
+          <div class="card-stat-icon"><i class="bi bi-table"></i></div>
           <div class="card-stat-title">Mesas</div>
           <div class="card-stat-number">0</div>
           <a href="mesas/listar.html">Gerenciar Mesas →</a>
         </div>
 
         <div class="card-stat">
-          <div class="card-stat-icon">📋</div>
+          <div class="card-stat-icon"><i class="bi bi-tags"></i></div>
           <div class="card-stat-title">Categorias</div>
           <div class="card-stat-number">0</div>
           <a href="categorias/listar.html">Ver Categorias →</a>
         </div>
 
         <div class="card-stat">
-          <div class="card-stat-icon">📅</div>
+          <div class="card-stat-icon"><i class="bi bi-calendar-date"></i></div>
           <div class="card-stat-title">Reservas Hoje</div>
           <div class="card-stat-number">0</div>
           <a href="reservas/listar.html">Ver Reservas →</a>
@@ -94,10 +95,10 @@
       <section style="background-color: #fff; border-radius: 8px; padding: 30px; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);">
         <h3 style="color: #2c3e50; margin-bottom: 20px; border-bottom: 2px solid #ecf0f1; padding-bottom: 10px;">Ações Rápidas</h3>
         <div class="btn-group" style="flex-wrap: wrap; gap: 10px;">
-          <a href="categorias/form.html" class="btn btn-success">✚ Nova Categoria</a>
-          <a href="pratos/form.html" class="btn btn-success">✚ Novo Prato</a>
-          <a href="mesas/form.html" class="btn btn-success">✚ Nova Mesa</a>
-          <a href="reservas/form.html" class="btn btn-primary">✚ Nova Reserva</a>
+          <a href="categorias/form.html" class="btn btn-success"><i class="bi bi-plus-lg"></i>Nova Categoria</a>
+          <a href="pratos/form.html" class="btn btn-success"><i class="bi bi-plus-lg"></i>Novo Prato</a>
+          <a href="mesas/form.html" class="btn btn-success"><i class="bi bi-plus-lg"></i>Nova Mesa</a>
+          <a href="reservas/form.html" class="btn btn-primary"><i class="bi bi-plus-lg"></i>Nova Reserva</a>
         </div>
       </section>
 

@@ -1,3 +1,10 @@
+<?php
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../src/auth.php';
+verificarAcesso();
+$pdo = getConexao();
+$mesas = $pdo->query("SELECT id, numero, capacidade FROM mesas WHERE status = 'livre' OR status = 'reservada' ORDER BY numero")->fetchAll();
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -22,15 +29,15 @@
         <li><a href="../index.php"><i class="bi bi-grid-1x2"></i> Dashboard</a></li>
 
         <span class="sidebar-section-label">Cardápio</span>
-        <li><a href="../categorias/listar.php"><i class="bi bi-tags"></i> Categorias</a></li>
-        <li><a href="../pratos/listar.php"><i class="bi bi-egg-fried"></i> Pratos</a></li>
+        <li><a href="../categorias/PaginaCategoria.php"><i class="bi bi-tags"></i> Categorias</a></li>
+        <li><a href="../pratos/PaginaPrato.php"><i class="bi bi-egg-fried"></i> Pratos</a></li>
 
         <span class="sidebar-section-label">Operações</span>
-        <li><a href="../mesas/listar.php"><i class="bi bi-layout-three-columns"></i> Mesas</a></li>
-        <li><a href="listar.php" class="active"><i class="bi bi-calendar-check"></i> Reservas</a></li>
+        <li><a href="../mesas/PaginaMesa.php"><i class="bi bi-layout-three-columns"></i> Mesas</a></li>
+        <li><a href="PaginaReserva.php" class="active"><i class="bi bi-calendar-check"></i> Reservas</a></li>
 
         <hr class="sidebar-divider">
-        <li><a href="#" onclick="sair()"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
+        <li><a href="../logout.php"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
       </ul>
     </aside>
 
@@ -40,11 +47,12 @@
       </div>
 
       <div class="form-section">
-        <form method="post" action="">
+        <form method="post" action="salvar.php">
+          <input type="hidden" name="csrf_token" value="<?= gerarTokenCsrf() ?>">
           <div class="form-row">
             <div class="form-group required">
-              <label for="nome">Nome do Cliente</label>
-              <input type="text" id="nome" name="nome" required>
+              <label for="nome_cliente">Nome do Cliente</label>
+              <input type="text" id="nome_cliente" name="nome_cliente" required>
             </div>
 
             <div class="form-group required">
@@ -53,18 +61,15 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email">
-          </div>
-
           <div class="form-row">
             <div class="form-group required">
               <label for="mesa_id">Mesa</label>
               <select id="mesa_id" name="mesa_id" required>
                 <option value="">Selecione</option>
+                <?php foreach ($mesas as $m): ?>
+                  <option value="<?= $m['id'] ?>">Mesa <?= $m['numero'] ?> (<?= $m['capacidade'] ?> pessoas)</option>
+                <?php endforeach; ?>
               </select>
-
             </div>
 
             <div class="form-group required">
@@ -101,7 +106,7 @@
 
           <div class="form-buttons">
             <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Salvar</button>
-            <a href="listar.php" class="btn btn-secondary">Cancelar</a>
+            <a href="PaginaReserva.php" class="btn btn-secondary">Cancelar</a>
           </div>
         </form>
       </div>
@@ -110,17 +115,8 @@
 
   <script>
     window.addEventListener('load', () => {
-      if (localStorage.getItem('user_logged') !== 'true') window.location.href = '../login.php';
       document.getElementById('data_reserva').setAttribute('min', new Date().toISOString().split('T')[0]);
     });
-
-    function sair() {
-      if (confirm('Sair do painel?')) {
-        localStorage.removeItem('user_logged');
-        localStorage.removeItem('username');
-        window.location.href = '../login.php';
-      }
-    }
   </script>
 </body>
 </html>

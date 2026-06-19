@@ -1,3 +1,44 @@
+<?php
+session_start();
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/src/auth.php';
+
+if (isset($_SESSION['usuario_id'])) {
+    header('Location: index.php');
+    exit;
+}
+
+$erro  = '';
+$email = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    validarCsrf();
+
+    $email = trim($_POST['email'] ?? '');
+    $senha = $_POST['senha']      ?? '';
+
+    if (empty($email) || empty($senha)) {
+        $erro = 'Preencha e-mail e senha.';
+    } else {
+        $pdo  = getConexao();
+        $stmt = $pdo->prepare('SELECT id, nome, senha FROM usuarios WHERE email = :email');
+        $stmt->bindValue(':email', $email, PDO::PARAM_STR);
+        $stmt->execute();
+        $usuario = $stmt->fetch();
+
+        if ($usuario && password_verify($senha, $usuario['senha'])) {
+            session_regenerate_id(true);
+            $_SESSION['usuario_id']   = $usuario['id'];
+            $_SESSION['usuario_nome'] = $usuario['nome'];
+            header('Location: index.php');
+            exit;
+        }
+
+        $erro = 'E-mail ou senha inválidos.';
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -21,7 +62,6 @@
       overflow: hidden;
     }
 
-    /* grade decorativa ao fundo */
     body::before {
       content: '';
       position: fixed;
@@ -33,7 +73,6 @@
       pointer-events: none;
     }
 
-    /* brilho central */
     body::after {
       content: '';
       position: fixed;
@@ -54,7 +93,6 @@
       z-index: 1;
     }
 
-    /* topo da marca */
     .brand {
       text-align: center;
       margin-bottom: 36px;
@@ -87,7 +125,6 @@
       letter-spacing: 2px;
     }
 
-    /* card do formulário */
     .login-card {
       background: #1a1a1a;
       border: 1px solid #2a2a2a;
@@ -108,9 +145,7 @@
       margin-bottom: 28px;
     }
 
-    .field {
-      margin-bottom: 16px;
-    }
+    .field { margin-bottom: 16px; }
 
     .field label {
       display: block;
@@ -135,33 +170,7 @@
     }
 
     .field input::placeholder { color: #3a3a3a; }
-
-    .field input:focus {
-      outline: none;
-      border-color: #a01e1e;
-    }
-
-    .field-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 24px;
-    }
-
-    .field-row label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.82rem;
-      color: #555;
-      cursor: pointer;
-    }
-
-    .field-row input[type="checkbox"] {
-      accent-color: #a01e1e;
-      width: 14px;
-      height: 14px;
-    }
+    .field input:focus { outline: none; border-color: #a01e1e; }
 
     .btn-entrar {
       width: 100%;
@@ -181,7 +190,7 @@
     .btn-entrar:hover { background: #861818; }
 
     .erro {
-      display: none;
+      display: flex;
       align-items: center;
       gap: 8px;
       background: #2a1010;
@@ -192,8 +201,6 @@
       font-size: 0.82rem;
       margin-bottom: 18px;
     }
-
-    .erro.ativo { display: flex; }
 
     .rodape {
       text-align: center;
@@ -218,26 +225,24 @@
       <h2>Bem-vindo de volta</h2>
       <p>Entre com suas credenciais para continuar</p>
 
-      <div id="erro" class="erro">
+      <?php if ($erro): ?>
+      <div class="erro">
         <i class="bi bi-x-circle"></i>
-        Usuário ou senha incorretos.
+        <?= e($erro) ?>
       </div>
+      <?php endif; ?>
 
-      <form onsubmit="logar(event)">
+      <form method="POST" action="login.php">
+        <input type="hidden" name="csrf_token" value="<?= gerarTokenCsrf() ?>">
+
         <div class="field">
-          <label>Usuário</label>
-          <input type="text" id="usuario" placeholder="seu usuário" autocomplete="username" required>
+          <label>E-mail</label>
+          <input type="email" name="email" value="<?= e($email) ?>" placeholder="seu@email.com" autocomplete="email" required>
         </div>
 
         <div class="field">
           <label>Senha</label>
-          <input type="password" id="senha" placeholder="••••••••" autocomplete="current-password" required>
-        </div>
-
-        <div class="field-row">
-          <label>
-            <input type="checkbox" id="lembrar"> Manter conectado
-          </label>
+          <input type="password" name="senha" placeholder="••••••••" autocomplete="current-password" required>
         </div>
 
         <button type="submit" class="btn-entrar">Entrar</button>
@@ -249,27 +254,5 @@
     </div>
   </div>
 
-  <script>
-    window.addEventListener('load', () => {
-      if (localStorage.getItem('user_logged') === 'true') window.location.href = 'index.php';
-    });
-
-    function logar(e) {
-      e.preventDefault();
-      const u = document.getElementById('usuario').value;
-      const s = document.getElementById('senha').value;
-      const validos = { admin: 'admin123' };
-
-      if (validos[u] && validos[u] === s) {
-        localStorage.setItem('user_logged', 'true');
-        localStorage.setItem('username', u);
-        window.location.href = 'index.php';
-      } else {
-        const el = document.getElementById('erro');
-        el.classList.add('ativo');
-        setTimeout(() => el.classList.remove('ativo'), 4000);
-      }
-    }
-  </script>
 </body>
 </html>

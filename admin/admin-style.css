@@ -391,6 +391,22 @@ td {
 tbody tr:last-child td { border-bottom: none; }
 tbody tr:hover { background: rgba(255,255,255,0.02); }
 
+/* ── Badges ── */
+.badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+.badge-success  { background: #0a2e18; color: #34d399; border: 1px solid #134e2a; }
+.badge-danger   { background: #2e0a0a; color: #f87171; border: 1px solid #4e1313; }
+.badge-warning  { background: #2a1f05; color: #fbbf24; border: 1px solid #3d2e08; }
+.badge-info     { background: #0a1a2e; color: #60a5fa; border: 1px solid #132440; }
+
 /* ── Status badges ── */
 .status-badge {
   display: inline-block;
@@ -474,6 +490,64 @@ tbody tr:hover { background: rgba(255,255,255,0.02); }
   padding: 10px;
   text-align: center;
   justify-content: center;
+}
+
+/* ── Toggle switch ── */
+.form-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: var(--bg);
+  border: 1px solid var(--borda);
+  border-radius: 6px;
+  cursor: pointer;
+  margin-bottom: 18px;
+  user-select: none;
+}
+
+.form-toggle:hover { border-color: var(--borda2); }
+
+.form-toggle-label {
+  font-size: 0.875rem;
+  color: var(--txt);
+  font-weight: 500;
+}
+
+.form-toggle input[type="checkbox"] {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--bg3);
+  border: 1px solid var(--borda2);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  flex-shrink: 0;
+}
+
+.form-toggle input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  background: var(--txt3);
+  border-radius: 50%;
+  transition: left 0.2s, background 0.2s;
+}
+
+.form-toggle input[type="checkbox"]:checked {
+  background: var(--acento);
+  border-color: var(--acento);
+}
+
+.form-toggle input[type="checkbox"]:checked::after {
+  left: 18px;
+  background: #fff;
 }
 
 /* ── Upload ── */

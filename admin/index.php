@@ -1,3 +1,26 @@
+<?php
+session_start();
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/src/auth.php';
+verificarAcesso();
+
+$pdo = getConexao();
+$totalPratos     = $pdo->query("SELECT COUNT(*) FROM pratos")->fetchColumn();
+$totalMesas      = $pdo->query("SELECT COUNT(*) FROM mesas")->fetchColumn();
+$totalCategorias = $pdo->query("SELECT COUNT(*) FROM categorias")->fetchColumn();
+$totalReservasHoje = $pdo->query("SELECT COUNT(*) FROM reservas WHERE data_reserva = CURDATE()")->fetchColumn();
+
+$reservasRecentes = $pdo->query("
+    SELECT r.*, m.numero AS mesa_numero
+    FROM reservas r
+    LEFT JOIN mesas m ON r.mesa_id = m.id
+    ORDER BY r.data_reserva DESC, r.hora_reserva DESC
+    LIMIT 5
+")->fetchAll();
+
+$badgesReserva = ['pendente' => 'badge-warning', 'confirmada' => 'badge-success', 'cancelada' => 'badge-danger'];
+$labelsReserva = ['pendente' => 'Pendente', 'confirmada' => 'Confirmada', 'cancelada' => 'Cancelada'];
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -22,18 +45,15 @@
         <li><a href="index.php" class="active"><i class="bi bi-grid-1x2"></i> Dashboard</a></li>
 
         <span class="sidebar-section-label">Cardápio</span>
-
-        <li><a href="categorias/listar.php"><i class="bi bi-tags"></i> Categorias</a></li>
-        <li><a href="pratos/listar.php"><i class="bi bi-egg-fried"></i> Pratos</a></li>
+        <li><a href="categorias/PaginaCategoria.php"><i class="bi bi-tags"></i> Categorias</a></li>
+        <li><a href="pratos/PaginaPrato.php"><i class="bi bi-egg-fried"></i> Pratos</a></li>
 
         <span class="sidebar-section-label">Operações</span>
-
-        <li><a href="mesas/listar.php"><i class="bi bi-layout-three-columns"></i> Mesas</a></li>
-        <li><a href="reservas/listar.php"><i class="bi bi-calendar-check"></i> Reservas</a></li>
+        <li><a href="mesas/PaginaMesa.php"><i class="bi bi-layout-three-columns"></i> Mesas</a></li>
+        <li><a href="reservas/PaginaReserva.php"><i class="bi bi-calendar-check"></i> Reservas</a></li>
 
         <hr class="sidebar-divider">
-
-        <li><a href="#" onclick="sair()"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
+        <li><a href="logout.php"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
       </ul>
     </aside>
 
@@ -44,8 +64,8 @@
         </div>
         <div class="header-actions">
           <div class="user-chip">
-            <div class="user-chip-avatar" id="inicial">A</div>
-            <span id="username-display">Admin</span>
+            <div class="user-chip-avatar"><?= strtoupper(substr($_SESSION['usuario_nome'] ?? 'A', 0, 1)) ?></div>
+            <span><?= e($_SESSION['usuario_nome'] ?? 'Admin') ?></span>
           </div>
         </div>
       </div>
@@ -53,29 +73,29 @@
       <div class="cards-stats">
         <div class="card-stat">
           <div class="card-stat-title">Pratos <i class="bi bi-egg-fried"></i></div>
-          <div class="card-stat-number">0</div>
-          <a href="pratos/listar.php" class="card-stat-link">Ver pratos <i class="bi bi-arrow-right"></i></a>
+          <div class="card-stat-number"><?= $totalPratos ?></div>
+          <a href="pratos/PaginaPrato.php" class="card-stat-link">Ver pratos <i class="bi bi-arrow-right"></i></a>
           <div class="card-stat-bar"></div>
         </div>
 
         <div class="card-stat">
           <div class="card-stat-title">Mesas <i class="bi bi-layout-three-columns"></i></div>
-          <div class="card-stat-number">0</div>
-          <a href="mesas/listar.php" class="card-stat-link">Gerenciar <i class="bi bi-arrow-right"></i></a>
+          <div class="card-stat-number"><?= $totalMesas ?></div>
+          <a href="mesas/PaginaMesa.php" class="card-stat-link">Gerenciar <i class="bi bi-arrow-right"></i></a>
           <div class="card-stat-bar"></div>
         </div>
 
         <div class="card-stat">
           <div class="card-stat-title">Categorias <i class="bi bi-tags"></i></div>
-          <div class="card-stat-number">0</div>
-          <a href="categorias/listar.php" class="card-stat-link">Ver categorias <i class="bi bi-arrow-right"></i></a>
+          <div class="card-stat-number"><?= $totalCategorias ?></div>
+          <a href="categorias/PaginaCategoria.php" class="card-stat-link">Ver categorias <i class="bi bi-arrow-right"></i></a>
           <div class="card-stat-bar"></div>
         </div>
 
         <div class="card-stat">
           <div class="card-stat-title">Reservas hoje <i class="bi bi-calendar-check"></i></div>
-          <div class="card-stat-number">0</div>
-          <a href="reservas/listar.php" class="card-stat-link">Ver reservas <i class="bi bi-arrow-right"></i></a>
+          <div class="card-stat-number"><?= $totalReservasHoje ?></div>
+          <a href="reservas/PaginaReserva.php" class="card-stat-link">Ver reservas <i class="bi bi-arrow-right"></i></a>
           <div class="card-stat-bar"></div>
         </div>
       </div>
@@ -83,7 +103,7 @@
       <div class="section-card">
         <div class="section-card-header">
           <h3>Reservas recentes</h3>
-          <a href="reservas/listar.php" class="btn btn-secondary btn-small">Ver todas</a>
+          <a href="reservas/PaginaReserva.php" class="btn btn-secondary btn-small">Ver todas</a>
         </div>
         <div class="table-container">
           <table>
@@ -99,15 +119,31 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td colspan="7">
-                  <div class="empty-state">
-                    <i class="bi bi-calendar-x"></i>
-                    <h3>Nenhuma reserva ainda</h3>
-                    <p>As reservas aparecerão aqui.</p>
-                  </div>
-                </td>
-              </tr>
+              <?php if (empty($reservasRecentes)): ?>
+                <tr>
+                  <td colspan="7">
+                    <div class="empty-state">
+                      <i class="bi bi-calendar-x"></i>
+                      <h3>Nenhuma reserva ainda</h3>
+                      <p>As reservas aparecerão aqui.</p>
+                    </div>
+                  </td>
+                </tr>
+              <?php else: ?>
+                <?php foreach ($reservasRecentes as $r): ?>
+                  <tr>
+                    <td><?= $r['id'] ?></td>
+                    <td><?= e($r['nome_cliente']) ?></td>
+                    <td><?= date('d/m/Y', strtotime($r['data_reserva'])) ?></td>
+                    <td><?= substr($r['hora_reserva'], 0, 5) ?></td>
+                    <td><?= $r['num_pessoas'] ?></td>
+                    <td><span class="badge <?= $badgesReserva[$r['status']] ?? 'badge-warning' ?>"><?= $labelsReserva[$r['status']] ?? e($r['status']) ?></span></td>
+                    <td class="acoes">
+                      <a href="reservas/editar.php?id=<?= $r['id'] ?>" class="btn btn-secondary btn-small"><i class="bi bi-pencil"></i> Editar</a>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              <?php endif; ?>
             </tbody>
           </table>
         </div>
@@ -115,22 +151,5 @@
     </main>
   </div>
 
-  <script>
-    window.addEventListener('load', () => {
-      if (localStorage.getItem('user_logged') !== 'true') return window.location.href = 'login.php';
-      const u = localStorage.getItem('username') || 'admin';
-      const nome = u.charAt(0).toUpperCase() + u.slice(1);
-      document.getElementById('username-display').textContent = nome;
-      document.getElementById('inicial').textContent = nome.charAt(0);
-    });
-
-    function sair() {
-      if (confirm('Sair do painel?')) {
-        localStorage.removeItem('user_logged');
-        localStorage.removeItem('username');
-        window.location.href = 'login.php';
-      }
-    }
-  </script>
 </body>
 </html>

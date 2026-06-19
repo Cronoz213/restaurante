@@ -1,3 +1,10 @@
+<?php
+require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../src/auth.php';
+verificarAcesso();
+$pdo = getConexao();
+$categorias = $pdo->query("SELECT id, nome FROM categorias WHERE ativo = 1 ORDER BY nome")->fetchAll();
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -22,15 +29,15 @@
         <li><a href="../index.php"><i class="bi bi-grid-1x2"></i> Dashboard</a></li>
 
         <span class="sidebar-section-label">Cardápio</span>
-        <li><a href="../categorias/listar.php"><i class="bi bi-tags"></i> Categorias</a></li>
-        <li><a href="listar.php" class="active"><i class="bi bi-egg-fried"></i> Pratos</a></li>
+        <li><a href="../categorias/PaginaCategoria.php"><i class="bi bi-tags"></i> Categorias</a></li>
+        <li><a href="PaginaPrato.php" class="active"><i class="bi bi-egg-fried"></i> Pratos</a></li>
 
         <span class="sidebar-section-label">Operações</span>
-        <li><a href="../mesas/listar.php"><i class="bi bi-layout-three-columns"></i> Mesas</a></li>
-        <li><a href="../reservas/listar.php"><i class="bi bi-calendar-check"></i> Reservas</a></li>
+        <li><a href="../mesas/PaginaMesa.php"><i class="bi bi-layout-three-columns"></i> Mesas</a></li>
+        <li><a href="../reservas/PaginaReserva.php"><i class="bi bi-calendar-check"></i> Reservas</a></li>
 
         <hr class="sidebar-divider">
-        <li><a href="#" onclick="sair()"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
+        <li><a href="../logout.php"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
       </ul>
     </aside>
 
@@ -40,7 +47,8 @@
       </div>
 
       <div class="form-section">
-        <form method="post" action="">
+        <form method="post" action="salvar.php" enctype="multipart/form-data">
+          <input type="hidden" name="csrf_token" value="<?= gerarTokenCsrf() ?>">
           <div class="form-group required">
             <label for="nome">Nome do Prato</label>
             <input type="text" id="nome" name="nome" required>
@@ -56,6 +64,9 @@
               <label for="categoria_id">Categoria</label>
               <select id="categoria_id" name="categoria_id" required>
                 <option value="">Selecione</option>
+                <?php foreach ($categorias as $cat): ?>
+                  <option value="<?= $cat['id'] ?>"><?= e($cat['nome']) ?></option>
+                <?php endforeach; ?>
               </select>
             </div>
 
@@ -75,34 +86,19 @@
             </div>
           </div>
 
-          <div class="form-group">
-            <label>
-              <input type="checkbox" id="disponivel" name="disponivel" checked>
-              Disponível
-            </label>
-          </div>
+          <label class="form-toggle">
+            <span class="form-toggle-label">Disponível</span>
+            <input type="checkbox" name="disponivel" checked>
+          </label>
 
           <div class="form-buttons">
             <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Salvar</button>
-            <a href="listar.php" class="btn btn-secondary">Cancelar</a>
+            <a href="PaginaPrato.php" class="btn btn-secondary">Cancelar</a>
           </div>
         </form>
       </div>
     </main>
   </div>
 
-  <script>
-    window.addEventListener('load', () => {
-      if (localStorage.getItem('user_logged') !== 'true') window.location.href = '../login.php';
-    });
-
-    function sair() {
-      if (confirm('Sair do painel?')) {
-        localStorage.removeItem('user_logged');
-        localStorage.removeItem('username');
-        window.location.href = '../login.php';
-      }
-    }
-  </script>
 </body>
 </html>

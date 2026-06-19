@@ -402,6 +402,7 @@ section h3 {
 
 .card-category {
   display: inline-block;
+  align-self: flex-start;
   background: rgba(160,30,30,0.2);
   color: #f87171;
   border: 1px solid rgba(160,30,30,0.3);
@@ -574,10 +575,6 @@ section h3 {
   flex-direction: row;
   height: auto;
   min-height: 130px;
-}
-
-.cardapio-content .cards-grid .card:nth-child(even) {
-  flex-direction: row-reverse;
 }
 
 .cardapio-content .cards-grid .card img,

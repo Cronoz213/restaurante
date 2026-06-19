@@ -8,7 +8,7 @@ verificarAcesso();
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nova Categoria — Delícia do Dia</title>
+  <title>Categorias — Delícia do Dia</title>
   <link rel="stylesheet" href="../admin-style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 </head>
@@ -40,34 +40,7 @@ verificarAcesso();
     </aside>
 
     <main class="main-content">
-      <div class="header-page">
-        <h2>Nova Categoria</h2>
-      </div>
-
-      <div class="form-section">
-        <form method="post" action="salvar.php">
-          <input type="hidden" name="csrf_token" value="<?= gerarTokenCsrf() ?>">
-          <div class="form-group required">
-            <label for="nome">Nome</label>
-            <input type="text" id="nome" name="nome" required>
-          </div>
-
-          <div class="form-group">
-            <label for="descricao">Descrição</label>
-            <textarea id="descricao" name="descricao"></textarea>
-          </div>
-
-          <label class="form-toggle">
-            <span class="form-toggle-label">Ativo</span>
-            <input type="checkbox" name="ativo" checked>
-          </label>
-
-          <div class="form-buttons">
-            <button type="submit" class="btn btn-primary"><i class="bi bi-check-lg"></i> Salvar</button>
-            <a href="PaginaCategoria.php" class="btn btn-secondary">Cancelar</a>
-          </div>
-        </form>
-      </div>
+      <?php require_once 'listar.php'; ?>
     </main>
   </div>
 

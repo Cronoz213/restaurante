@@ -1,94 +1,79 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reservas — Delícia do Dia</title>
-  <link rel="stylesheet" href="../admin-style.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-</head>
-<body>
-  <div class="admin-wrapper">
-    <aside class="sidebar">
-      <div class="sidebar-brand">
-        <div class="sidebar-brand-icon"><i class="bi bi-cup-hot-fill"></i></div>
-        <div>
-          <h1>Delícia do Dia</h1>
-          <span class="sidebar-subtitle">Admin</span>
-        </div>
-      </div>
+<?php
+$pdo = getConexao();
+$stmt = $pdo->query("
+    SELECT r.*, m.numero AS mesa_numero
+    FROM reservas r
+    LEFT JOIN mesas m ON r.mesa_id = m.id
+    ORDER BY r.data_reserva DESC, r.hora_reserva DESC
+");
+$reservas = $stmt->fetchAll();
+$labels = ['pendente' => 'Pendente', 'confirmada' => 'Confirmada', 'cancelada' => 'Cancelada'];
+$badges = ['pendente' => 'badge-warning', 'confirmada' => 'badge-success', 'cancelada' => 'badge-danger'];
+?>
 
-      <ul class="sidebar-menu">
-        <li><a href="../index.php"><i class="bi bi-grid-1x2"></i> Dashboard</a></li>
-
-        <span class="sidebar-section-label">Cardápio</span>
-        <li><a href="../categorias/listar.php"><i class="bi bi-tags"></i> Categorias</a></li>
-        <li><a href="../pratos/listar.php"><i class="bi bi-egg-fried"></i> Pratos</a></li>
-
-        <span class="sidebar-section-label">Operações</span>
-        <li><a href="../mesas/listar.php"><i class="bi bi-layout-three-columns"></i> Mesas</a></li>
-        <li><a href="listar.php" class="active"><i class="bi bi-calendar-check"></i> Reservas</a></li>
-
-        <hr class="sidebar-divider">
-        <li><a href="#" onclick="sair()"><i class="bi bi-box-arrow-left"></i> Sair</a></li>
-      </ul>
-    </aside>
-
-    <main class="main-content">
-      <div class="header-page">
-        <div>
-          <h2>Reservas</h2>
-          <p class="header-page-sub">Gerencie as reservas do restaurante</p>
-        </div>
-        <div class="header-actions">
-          <a href="cadastrar.php" class="btn btn-primary"><i class="bi bi-plus"></i> Nova reserva</a>
-        </div>
-      </div>
-
-      <div class="section-card">
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Cliente</th>
-                <th>Telefone</th>
-                <th>Data</th>
-                <th>Hora</th>
-                <th>Pessoas</th>
-                <th>Status</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td colspan="8">
-                  <div class="empty-state">
-                    <i class="bi bi-calendar-x"></i>
-                    <h3>Nenhuma reserva cadastrada</h3>
-                    <p>Clique em "Nova reserva" para começar.</p>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </main>
+<div class="header-page">
+  <div>
+    <h2>Reservas</h2>
+    <p class="header-page-sub">Gerencie as reservas do restaurante</p>
   </div>
+  <div class="header-actions">
+    <a href="cadastrar.php" class="btn btn-primary"><i class="bi bi-plus"></i> Nova reserva</a>
+  </div>
+</div>
 
-  <script>
-    window.addEventListener('load', () => {
-      if (localStorage.getItem('user_logged') !== 'true') window.location.href = '../login.php';
-    });
+<?php if (isset($_GET['sucesso'])): ?>
+  <div class="alert alert-success">Operação realizada com sucesso!</div>
+<?php endif; ?>
+<?php if (isset($_GET['erro'])): ?>
+  <div class="alert alert-error">Erro ao realizar operação.</div>
+<?php endif; ?>
 
-    function sair() {
-      if (confirm('Sair do painel?')) {
-        localStorage.removeItem('user_logged');
-        localStorage.removeItem('username');
-        window.location.href = '../login.php';
-      }
-    }
-  </script>
-</body>
-</html>
+<div class="section-card">
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Cliente</th>
+          <th>Telefone</th>
+          <th>Mesa</th>
+          <th>Data</th>
+          <th>Hora</th>
+          <th>Pessoas</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php if (empty($reservas)): ?>
+          <tr>
+            <td colspan="9">
+              <div class="empty-state">
+                <i class="bi bi-calendar-x"></i>
+                <h3>Nenhuma reserva cadastrada</h3>
+                <p>Clique em "Nova reserva" para começar.</p>
+              </div>
+            </td>
+          </tr>
+        <?php else: ?>
+          <?php foreach ($reservas as $r): ?>
+            <tr>
+              <td><?= $r['id'] ?></td>
+              <td><?= e($r['nome_cliente']) ?></td>
+              <td><?= e($r['telefone']) ?></td>
+              <td>Mesa <?= $r['mesa_numero'] ?? '—' ?></td>
+              <td><?= date('d/m/Y', strtotime($r['data_reserva'])) ?></td>
+              <td><?= substr($r['hora_reserva'], 0, 5) ?></td>
+              <td><?= $r['num_pessoas'] ?></td>
+              <td><span class="badge <?= $badges[$r['status']] ?? 'badge-warning' ?>"><?= $labels[$r['status']] ?? $r['status'] ?></span></td>
+              <td class="acoes">
+                <a href="editar.php?id=<?= $r['id'] ?>" class="btn btn-secondary btn-small"><i class="bi bi-pencil"></i> Editar</a>
+                <a href="excluir.php?id=<?= $r['id'] ?>" class="btn btn-danger btn-small" onclick="return confirm('Excluir a reserva de <?= e($r['nome_cliente']) ?>?')"><i class="bi bi-trash"></i> Excluir</a>
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        <?php endif; ?>
+      </tbody>
+    </table>
+  </div>
+</div>

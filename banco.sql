@@ -60,6 +60,15 @@ CREATE TABLE IF NOT EXISTS reservas (
     ON UPDATE CASCADE ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS galeria (
+  id        INT           NOT NULL AUTO_INCREMENT,
+  titulo    VARCHAR(100)  DEFAULT NULL,
+  arquivo   VARCHAR(255)  NOT NULL,
+  ativo     TINYINT(1)    NOT NULL DEFAULT 1,
+  criado_em TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 INSERT INTO usuarios (nome, email, senha) VALUES (
   'Admin',
   'admin@restaurante.com',

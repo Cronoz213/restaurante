@@ -1,8 +1,4 @@
-CREATE DATABASE IF NOT EXISTS restaurante_portal
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
 
-USE restaurante_portal;
 
 CREATE TABLE IF NOT EXISTS usuarios (
   id         INT           NOT NULL AUTO_INCREMENT,

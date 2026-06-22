@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../src/auth.php';
 verificarAcesso();
@@ -33,6 +33,9 @@ verificarAcesso();
         <span class="sidebar-section-label">Operações</span>
         <li><a href="../mesas/PaginaMesa.php"><i class="bi bi-layout-three-columns"></i> Mesas</a></li>
         <li><a href="../reservas/PaginaReserva.php"><i class="bi bi-calendar-check"></i> Reservas</a></li>
+
+        <span class="sidebar-section-label">Visual</span>
+        <li><a href="../galeria/PaginaGaleria.php"><i class="bi bi-images"></i> Galeria</a></li>
 
         <hr class="sidebar-divider">
         <li><a href="../logout.php"><i class="bi bi-box-arrow-left"></i> Sair</a></li>

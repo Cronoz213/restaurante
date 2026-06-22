@@ -1,6 +1,12 @@
 <?php
 require_once __DIR__ . '/../conexao.php';
 
+try {
+    $fotosGaleria = $conn->query("SELECT * FROM galeria WHERE ativo = 1 ORDER BY id DESC LIMIT 8")->fetchAll();
+} catch (PDOException $e) {
+    $fotosGaleria = [];
+}
+
 $destaques = $conn->query("
     SELECT p.*, c.nome AS categoria_nome
     FROM pratos p
@@ -73,6 +79,20 @@ $destaques = $conn->query("
         <a href="cardapio.php" class="btn btn-outline">Cardápio completo</a>
       </div>
     </section>
+
+    <?php if (!empty($fotosGaleria)): ?>
+    <section>
+      <h2>Nosso Ambiente</h2>
+      <div class="galeria-grid">
+        <?php foreach ($fotosGaleria as $foto): ?>
+          <div class="galeria-item">
+            <img src="../uploads/galeria/<?= htmlspecialchars($foto['arquivo']) ?>"
+                 alt="<?= htmlspecialchars($foto['titulo'] ?? 'Ambiente do restaurante') ?>">
+          </div>
+        <?php endforeach; ?>
+      </div>
+    </section>
+    <?php endif; ?>
 
     <section>
       <h2>Funcionamento</h2>
